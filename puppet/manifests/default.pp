@@ -75,5 +75,5 @@ exec { "${as_vagrant} 'gem install rails --no-rdoc --no-ri'":
 }
 
 file { '/etc/motd':
-  content => 'Welcome to The Starter League!\n'
+  content => 'Welcome to The Starter League!'
 }
