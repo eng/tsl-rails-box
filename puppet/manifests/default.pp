@@ -74,6 +74,12 @@ exec { "${as_vagrant} 'gem install rails --no-rdoc --no-ri'":
   require => Exec['install_ruby']
 }
 
+# --- Files ---------------------------------------------------------------------
+
 file { '/etc/motd':
   content => 'Welcome to The Starter League!'
+}
+
+file { '/etc/profile.d/startup.sh':
+  content => 'cd /site'
 }
