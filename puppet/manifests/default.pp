@@ -59,18 +59,13 @@ exec { 'install_rvm':
 }
 
 exec { 'install_ruby':
-  # We run the rvm executable directly because the shell function assumes an
-  # interactive environment, in particular to display messages or ask questions.
-  # The rvm executable is more suitable for automated installs.
-  #
-  # Thanks to @mpapis for this tip.
-  command => "${as_vagrant} '${home}/.rvm/bin/rvm install 1.9.3 --latest-binary --autolibs=enabled && rvm --fuzzy alias create default 1.9.3'",
-  creates => "${home}/.rvm/bin/ruby",
+  command => "${as_vagrant} '${home}/.rvm/bin/rvm install 2.1.0 --latest-binary --autolibs=enabled && rvm --fuzzy alias create default 2.1.0'",
+  creates => "${home}/.rvm/rubies/ruby-2.1.0/bin/ruby",
   require => Exec['install_rvm']
 }
 
 exec { "${as_vagrant} 'gem install rails --no-rdoc --no-ri'":
-  creates => "${home}/.rvm/gems/ruby-1.9.3-p392/bin/rails",
+  creates => "${home}/.rvm/gems/ruby-2.1.0/bin/rails",
   require => Exec['install_ruby']
 }
 
@@ -80,6 +75,10 @@ file { '/etc/motd':
   content => 'Welcome to The Starter League!'
 }
 
+file { '/home/vagrant/.gemrc':
+  content => 'gem: --no-ri --no-rdoc'
+}
+
 file { '/etc/profile.d/startup.sh':
-  content => 'cd /site'
+  content => 'cd /home/vagrant/code'
 }
