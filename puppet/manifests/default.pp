@@ -59,14 +59,20 @@ exec { 'install_rvm':
 }
 
 exec { 'install_ruby':
-  command => "${as_vagrant} '${home}/.rvm/bin/rvm install 2.1.0 --latest-binary --autolibs=enabled && rvm --fuzzy alias create default 2.1.0'",
+  command => "${as_vagrant} '${home}/.rvm/bin/rvm install 2.1.0 --autolibs=enabled && rvm --fuzzy alias create default 2.1.0'",
   creates => "${home}/.rvm/rubies/ruby-2.1.0/bin/ruby",
   require => Exec['install_rvm']
 }
 
-exec { "${as_vagrant} 'gem install rails --no-rdoc --no-ri'":
+exec { 'install_rails':
+  command => "${as_vagrant} 'gem install rails --no-rdoc --no-ri'",
   creates => "${home}/.rvm/gems/ruby-2.1.0/bin/rails",
   require => Exec['install_ruby']
+}
+
+exec { 'update_bundler':
+  command => "${as_vagrant} 'gem update bundler'",
+  require => Exec['install_rails']
 }
 
 # --- Files ---------------------------------------------------------------------
@@ -81,4 +87,9 @@ file { '/home/vagrant/.gemrc':
 
 file { '/etc/profile.d/startup.sh':
   content => 'cd /home/vagrant/code'
+}
+
+file { '/etc/profile.d/aliases.sh':
+  # source => 'puppet:///files/aliases.sh'
+  source => '/home/vagrant/code/puppet/files/aliases.sh'
 }
